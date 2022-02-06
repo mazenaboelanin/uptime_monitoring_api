@@ -3,8 +3,34 @@ const User = require("../models/User.model");
 // @ desc       Get All Users
 // @ route      GET api/v1/users
 // @ access     Private
-exports.getAllUsers = (req, res, next)=>{
-    res.json({users: "GET ALL USERS"});
+exports.getAllUsers = async(req, res, next)=>{
+    try {
+        const users = await User.find();
+        if(users.length > 0 ){
+            res.json({success: true, msg: "Get All Users", users});
+        }else {
+            res.json({success: false, msg: "No Users found"});
+        }
+    } catch (err) {
+        res.json({success: false, msg: "Error", err});
+    }
+}
+
+// @ desc       Get Single User
+// @ route      GET api/v1/users/:id
+// @ access     Private
+exports.getSingleUser = async(req, res, next)=>{
+    const {id} = req.params;
+    try {
+        const user = await User.findById(id);
+        if(user ){
+            res.json({success: true, msg: "Get Single user", user});
+        }else {
+            res.json({success: false, msg: `No user found with this ${id}`});
+        }
+    } catch (err) {
+        res.json({success: false, msg: "Error", err});
+    }
 }
 
 // @ desc       Add new User
