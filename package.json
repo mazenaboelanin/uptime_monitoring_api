@@ -1,0 +1,22 @@
+{
+  "name": "uptime_monitoring_api",
+  "version": "1.0.0",
+  "description": "uptime monitoring RESTful API server that allows authenticated users to monitor URLs, and get detailed uptime reports about their availability, average response time, and total uptime/downtime.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Mazen Abo Elanin",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "http-status-codes": "^2.2.0",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.0",
+    "nodemailer": "^6.7.2"
+  }
+}
