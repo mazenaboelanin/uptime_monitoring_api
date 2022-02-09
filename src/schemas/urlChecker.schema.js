@@ -3,7 +3,8 @@ const {Schema} = require('mongoose');
 const urlCheckerSchema = new Schema({
     name: {
         type: String,
-        required: [true, "Please add your Check Name"]
+        required: [true, "Please add your Check Name"],
+        unique: [true, "Check Name already taken"]
     },
     URL: {
         type: String,

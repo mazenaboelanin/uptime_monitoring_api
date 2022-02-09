@@ -1,8 +1,9 @@
 const router = require('express').Router();
-const { getAllURLs } = require('../controllers/urls.controller');
+const { getAllURLs, addURL, getSingleURL } = require('../controllers/urls.controller');
 
 
-router.route('/').get(getAllURLs);
+router.route('/').get(getAllURLs).post(addURL);
+router.route('/:id').get(getSingleURL);
 
 
 module.exports = router;
