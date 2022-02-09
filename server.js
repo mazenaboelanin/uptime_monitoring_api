@@ -9,6 +9,7 @@ dbConnection();
 
 // Route Files
 const usersRoutes = require('./src/routes/users.routes');
+const authRoutes = require('./src/routes/auth.routes');
 
 // express app
 const app = express();
@@ -20,6 +21,7 @@ app.use(morgan('dev'));
 
 // Load Routes
 app.use('/api/v1/users', usersRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 
 app.get('/', (req, res) => res.send('Hello World!'));
