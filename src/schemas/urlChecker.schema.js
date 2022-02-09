@@ -18,6 +18,9 @@ const urlCheckerSchema = new Schema({
     port: {
         type: String,
     },
+    createdBy:{
+        type: Schema.Types.ObjectId, ref: "user"
+    },
 
 },{
     timestamps: true

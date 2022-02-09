@@ -30,6 +30,7 @@ const userSchema = new Schema({
         enum: ["user" ,"admin"],
         default: 'user'
     },
+    urlIds: [{ type: Schema.Types.ObjectId, ref: "urlchecker"}]
 },{
     timestamps:true
 });
