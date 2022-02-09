@@ -1,5 +1,5 @@
 const {Schema} = require('mongoose');
-
+const url = require('url');
 const urlCheckerSchema = new Schema({
     name: {
         type: String,
@@ -25,6 +25,16 @@ const urlCheckerSchema = new Schema({
 
 },{
     timestamps: true
+});
+
+
+// Extract Protocol, Path, Port from Entered URL
+urlCheckerSchema.pre('save', function(){
+    const myUrl = new URL(this.URL);
+    this.protocol = myUrl.protocol;
+    this.path = myUrl.pathname;
+    this.port = myUrl.port;
+    console.log('********', `${this.protocol} - ${this.path} - ${this.port}`);
 });
 
 module.exports = urlCheckerSchema;
