@@ -52,7 +52,15 @@ exports.addURL = async(req, res, next)=>{
     try {
         const user = await User.findById(createdBy);
         if (user){
+
+            // Check if Logged In user equals entered CreatedBy
+            if(user._id.toString() !== req.user._id.toString() ){
+            res.json({success: false, msg: `User Id: ${url.createdBy} is not authorized to Add new URL`});
+            }
+
             const url = await UrlChecker.findOne({name});
+  
+            // Check if Url Check Exists
             if(url){
                 res.json({success: false, msg: "URL Check Already Exists"});
             }else {

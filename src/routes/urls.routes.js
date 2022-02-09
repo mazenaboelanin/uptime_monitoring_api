@@ -3,7 +3,7 @@ const { getAllURLs, addURL, getSingleURL, deleteURL, updateURL } = require('../c
 const { protect } = require('../middleware/auth');
 
 
-router.route('/').get(protect, getAllURLs).post(addURL);
+router.route('/').get(protect, getAllURLs).post(protect, addURL);
 router.route('/:id').get(protect, getSingleURL).put(protect, updateURL).delete(protect, deleteURL);
 
 
