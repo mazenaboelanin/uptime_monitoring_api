@@ -65,3 +65,52 @@ exports.addURL = async(req, res, next)=>{
         res.json({success: false, msg: "Error", err});
     }
 }
+
+
+
+
+// @ desc       Update URL
+// @ route      PUT api/v1/urls/:id
+// @ access     Private
+exports.updateURL = async(req, res, next)=>{
+    const {id} = req.params;
+    const bodyToUpdate = req.body;
+    try {
+        
+        const url = await UrlChecker.findById(id);
+        if(url){
+            const updateURL = await User.findByIdAndUpdate(id, bodyToUpdate, {
+                new: true,
+                runValidators: true
+            });
+            res.json({success: true, msg: "URL Check Updated Successfully", updateURL});
+        }else {
+            res.json({success: false, msg: `No URL Checker found with this ${id}`});
+        }
+        
+    } catch (err) {
+        res.json({success: false, msg: "Error", err});
+    }
+}
+
+
+
+// @ desc       Delete URL
+// @ route      DELETE api/v1/urls/:id
+// @ access     Private
+exports.deleteURL = async(req, res, next)=>{
+    const {id} = req.params;
+    try {
+        const url = await UrlChecker.findById(id);
+        if(url){
+            const deleteURL = await UrlChecker.deleteOne({id});
+
+            res.json({success: true, msg: "URL Check Deleted Successfully", deleteURL});
+        }else {
+            res.json({success: false, msg: `No URL check found with this ${id}`});
+        }
+        
+    } catch (err) {
+        res.json({success: false, msg: "Error", err});
+    }
+}
