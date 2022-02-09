@@ -8,7 +8,10 @@ exports.getAllURLs = async(req, res, next)=>{
     try {
         const URLs = await UrlChecker.find();
         if(URLs.length > 0 ){
-            res.json({success: true, msg: "Get All URLs", count: URLs.length, URLs});
+            // Return All Urls Owned By logged in User
+            const URLsOwned = URLs.filter(url => url.createdBy.toString() === req.user._id.toString());
+           
+            res.json({success: true, msg: "Get All URLs", count: URLsOwned.length, URLsOwned});
         }else {
             res.json({success: false, msg: "No URLs found"});
         }
@@ -24,9 +27,14 @@ exports.getAllURLs = async(req, res, next)=>{
 exports.getSingleURL = async(req, res, next)=>{
     const {id} = req.params;
     try {
-        const URL = await UrlChecker.findById(id);
-        if(URL ){
-            res.json({success: true, msg: "Get Single URL", URL});
+        const url = await UrlChecker.findById(id);
+        if(url){
+            // Check On URL Owner
+            if(url.createdBy.toString() !== req.user._id.toString() ){
+                res.json({success: false, msg: `User Id: ${url.createdBy} is not authorized to GET this URL`});
+            }
+
+            res.json({success: true, msg: "Get Single URL", url});
         }else {
             res.json({success: false, msg: `No URL found with this ${id}`});
         }
@@ -48,7 +56,7 @@ exports.addURL = async(req, res, next)=>{
             if(url){
                 res.json({success: false, msg: "URL Check Already Exists"});
             }else {
-                const newURL = new UrlChecker({name,URL});
+                const newURL = new UrlChecker({name,URL, createdBy});
                 const data = await newURL.save();
                 
                 // adding new URL to Specific User
@@ -76,14 +84,21 @@ exports.updateURL = async(req, res, next)=>{
     const {id} = req.params;
     const bodyToUpdate = req.body;
     try {
-        
-        const url = await UrlChecker.findById(id);
+        let url = await UrlChecker.findById(id);
         if(url){
-            const updateURL = await User.findByIdAndUpdate(id, bodyToUpdate, {
+            console.log(req.user._id);
+            console.log(url.createdBy);
+            // Check On URL Owner
+            if(url.createdBy.toString() !== req.user._id.toString() ){
+                res.json({success: false, msg: `User Id: ${url.createdBy} is not authorized to update this URL`});
+            }
+
+            url = await UrlChecker.findByIdAndUpdate(id, bodyToUpdate, {
                 new: true,
                 runValidators: true
             });
-            res.json({success: true, msg: "URL Check Updated Successfully", updateURL});
+
+            res.json({success: true, msg: "URL Check Updated Successfully", url});
         }else {
             res.json({success: false, msg: `No URL Checker found with this ${id}`});
         }
@@ -103,6 +118,13 @@ exports.deleteURL = async(req, res, next)=>{
     try {
         const url = await UrlChecker.findById(id);
         if(url){
+            
+            console.log(req.user._id);
+            console.log(url.createdBy);
+            // Check On URL Owner
+            if(url.createdBy.toString() !== req.user._id.toString() ){
+                res.json({success: false, msg: `User Id: ${url.createdBy} is not authorized to Delete this URL`});
+            }
             const deleteURL = await UrlChecker.deleteOne({id});
 
             res.json({success: true, msg: "URL Check Deleted Successfully", deleteURL});

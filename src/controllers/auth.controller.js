@@ -84,3 +84,12 @@ exports.verify = async (req, res)=>{
 
 
 }
+
+// @ desc       Get Current Login user
+// @ route      GET api/v1/auth/me
+// @ access     Private
+
+exports.getMe = async(req, res, next)=>{
+    const user = await User.findById(req.user.id);
+    res.json({success: true, data: user});
+}
