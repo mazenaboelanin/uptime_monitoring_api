@@ -8,8 +8,10 @@ const dotenv = require('dotenv').config({path: './config/config.env'});
 dbConnection();
 
 // Route Files
-const usersRoutes = require('./src/routes/users.routes');
 const authRoutes = require('./src/routes/auth.routes');
+const usersRoutes = require('./src/routes/users.routes');
+const urlsRoutes = require('./src/routes/urls.routes');
+
 
 // express app
 const app = express();
@@ -20,8 +22,9 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Load Routes
-app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', usersRoutes);
+app.use('/api/v1/urls', urlsRoutes);
 
 
 app.get('/', (req, res) => res.send('Hello World!'));
