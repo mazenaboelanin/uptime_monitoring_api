@@ -11,7 +11,7 @@ dbConnection();
 const authRoutes = require('./src/routes/auth.routes');
 const usersRoutes = require('./src/routes/users.routes');
 const urlsRoutes = require('./src/routes/urls.routes');
-
+const monitoringRoutes = require('./src/routes/monitoring.routes');
 
 // express app
 const app = express();
@@ -25,6 +25,7 @@ app.use(morgan('dev'));
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/urls', urlsRoutes);
+app.use('/api/v1/monitoring', monitoringRoutes);
 
 
 app.get('/', (req, res) => res.send('Hello World!'));
