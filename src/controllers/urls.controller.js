@@ -126,16 +126,21 @@ exports.deleteURL = async(req, res, next)=>{
     try {
         const url = await UrlChecker.findById(id);
         if(url){
-            
-            console.log(req.user._id);
-            console.log(url.createdBy);
+            const user = req.user;
+
             // Check On URL Owner
-            if(url.createdBy.toString() !== req.user._id.toString() ){
+            if(url.createdBy.toString() !== user._id.toString() ){
                 res.json({success: false, msg: `User Id: ${url.createdBy} is not authorized to Delete this URL`});
             }
-            const deleteURL = await UrlChecker.deleteOne({id});
+            const deleteUrl = await UrlChecker.deleteOne({_id: id});
 
-            res.json({success: true, msg: "URL Check Deleted Successfully", deleteURL});
+            // Remove delete Url from urls in User
+            const updatedUser = await User.updateOne(
+                {_id: user._id},
+                {urlIds: [...user.urlIds.filter(URL => URL._id != id)]}
+                );
+                console.log(updatedUser);
+            res.json({success: true, msg: "URL Check Deleted Successfully", deleteUrl});
         }else {
             res.json({success: false, msg: `No URL check found with this ${id}`});
         }
