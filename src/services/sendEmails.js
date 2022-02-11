@@ -17,7 +17,7 @@ let transporter = nodemailer.createTransport({
       
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: `"Bosta Company" <${from}>`, // sender address
+    from: `"Monitoring API" <${from}>`, // sender address
     to: `${to.join(",")}`, // list of receivers
     subject: subject,
     html: html, // html body
