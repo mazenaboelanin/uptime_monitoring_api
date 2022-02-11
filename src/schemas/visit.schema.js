@@ -1,5 +1,5 @@
 const {Schema} = require('mongoose');
-
+// visits records every visit on specific URL 
 const visitSchema = new Schema({
     visitedUrl: {
         type: String,
@@ -13,12 +13,6 @@ const visitSchema = new Schema({
         type: Number,
         default: 0
     },
-    uptime:{
-        type: Number,
-    },
-    downtime: {
-        type: Number,
-    },
     Successful: {
         type: Boolean,
         default: false
@@ -27,12 +21,8 @@ const visitSchema = new Schema({
         type: Date,
         default: Date.now()
     },
-    availability:{
-        type: Number,
-
-    },
-
-    CreatedBy: { type: Schema.Types.ObjectId, ref: "user"}
+    createdBy: { type: Schema.Types.ObjectId, ref: "user"},
+    monitor: {type: Schema.Types.ObjectId, ref: "monitor"}
 },{
     timestamps:true
 });

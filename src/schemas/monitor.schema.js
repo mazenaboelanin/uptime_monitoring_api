@@ -1,5 +1,5 @@
 const {Schema} = require('mongoose');
-
+// Monitor records every total visits on URL and get info for report
 const monitorSchema = new Schema({
     monitoredUrl: {
         type: String,
