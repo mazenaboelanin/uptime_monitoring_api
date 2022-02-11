@@ -2,6 +2,7 @@ const axios = require('axios');
 const UrlChecker = require('../models/UrlChecker.model');
 const cron = require('node-cron');
 const sendMail = require('../services/sendEmails');
+const Visit = require('../models/Visit.model');
 
 // @ desc       URL Monitoring
 // @ route      GET api/v1/monitoring
@@ -22,8 +23,8 @@ exports.monitoring = async(req, res, next)=>{
             let isUp;
             let sentMailDown = false;
             let sentMailUp = false;
-            cron.schedule('* * * * * *', async()=>{
-              console.log('Request every 1 sec');
+            cron.schedule('*/10 * * * * *', async()=>{
+              console.log('Request every 10 sec');
           
               try {
                 isUp = false;
@@ -59,6 +60,16 @@ exports.monitoring = async(req, res, next)=>{
                 console.log("** Response Time", response.headers['request-duration'])
                 console.log("** Response Status", response.status);
                 console.log(monitoringData);
+                // add visit to DB
+                const newVisit = new Visit({
+                    visitedUrl: url,
+                    responseStatus: response.status,
+                    reponseDuration: response.headers['request-duration'],
+                    Successful: true,
+                    visitDate: Date.now(),
+                    createdBy: req.user._id
+                });
+                const data = await newVisit.save();
                 if(!sentMailUp){
                 // Report Uptime
                 sendMail(process.env.MAIL_SENDER, process.env.MAIL_SENDER_PASSWORD, [req.user.email], 'API Is UP', `<h1>API Is UP</h1> <p>You Can Access it Now <br> ${url}</p>`);
@@ -67,7 +78,7 @@ exports.monitoring = async(req, res, next)=>{
                 }
           
           
-                res.json(monitoringData);
+                res.json(data);
               }
                
               } catch (error) {
@@ -81,12 +92,21 @@ exports.monitoring = async(req, res, next)=>{
                       //responseData: "UNKNOWN"
                     }
                     console.log(monitoringData);
+                    // add visit to DB
+                    const newVisit = new Visit({
+                        visitedUrl: url,
+                        responseStatus: null,
+                        Successful: false,
+                        visitDate: Date.now(),
+                        createdBy: req.user._id
+                    });
+                    const data = await newVisit.save();
                     if(!sentMailDown){
                     // // Report Downtime
                     sendMail(process.env.MAIL_SENDER, process.env.MAIL_SENDER_PASSWORD, [req.user.email], 'API Is Down', `<h1>API Is Down</h1> <p>You have an Issue <br> ${url}</p>`);
                     sentMailDown = true;
                     sentMailUp = false;
-                    res.json(monitoringData);
+                    res.json(data);
                     }
           
                   }

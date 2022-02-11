@@ -11,7 +11,8 @@ const visitSchema = new Schema({
     },
     reponseDuration: {
         type: Number,
-        default: 0
+        // will check > 0 when calculating avg responseTime
+        default: -1
     },
     Successful: {
         type: Boolean,
