@@ -23,7 +23,6 @@ const visitSchema = new Schema({
         default: Date.now()
     },
     createdBy: { type: Schema.Types.ObjectId, ref: "user"},
-    monitor: {type: Schema.Types.ObjectId, ref: "monitor"}
 },{
     timestamps:true
 });

@@ -25,6 +25,7 @@ const monitorSchema = new Schema({
     outages:{
         type: Number,
     },
+    visitIds:{ type: Schema.Types.ObjectId, ref: "visit"}
 
 },{
     timestamps:true
