@@ -2,7 +2,9 @@ const axios = require('axios');
 const UrlChecker = require('../models/UrlChecker.model');
 const cron = require('node-cron');
 const sendMail = require('../services/sendEmails');
+const Monitor = require('../models/Monitor.model');
 const Visit = require('../models/Visit.model');
+
 
 // @ desc       URL Monitoring
 // @ route      GET api/v1/monitoring
@@ -70,6 +72,24 @@ exports.monitoring = async(req, res, next)=>{
                     createdBy: req.user._id
                 });
                 const data = await newVisit.save();
+                // Find Monitor by User ID and URL
+                const monitor = await Monitor.findOne({monitoredUrl: url});
+                // check if there is monitor, add visit to it
+                if(monitor){
+                    // adding new visit to monitor
+                    await Monitor.updateOne({createdBy: req.user._id, monitoredUrl: url}, {visitIds: [...monitor.visitIds, data._id]});
+                }else {
+                    // create new monitor and add visit to it
+                    const newMonitor = new Monitor({
+                        monitoredUrl: url,
+                        currentResponseStatus: response.status,
+                        createdBy: req.user._id,
+                        visitIds: data._id
+                    });
+                    const monitoredData = await newMonitor.save();
+                }
+
+
                 if(!sentMailUp){
                 // Report Uptime
                 sendMail(process.env.MAIL_SENDER, process.env.MAIL_SENDER_PASSWORD, [req.user.email], 'API Is UP', `<h1>API Is UP</h1> <p>You Can Access it Now <br> ${url}</p>`);
@@ -77,8 +97,7 @@ exports.monitoring = async(req, res, next)=>{
                 sentMailDown = false;
                 }
           
-          
-                res.json(data);
+                res.json({data});
               }
                
               } catch (error) {
@@ -101,14 +120,30 @@ exports.monitoring = async(req, res, next)=>{
                         createdBy: req.user._id
                     });
                     const data = await newVisit.save();
+                    // Find Monitor by User ID and URL
+                    const monitor = await Monitor.findOne({monitoredUrl: url});
+                    // check if there is monitor, add visit to it
+                    if(monitor){
+                        // adding new visit to monitor
+                        await Monitor.updateOne({createdBy: req.user._id, monitoredUrl: url}, {visitIds: [...monitor.visitIds, data._id]});
+                    }else {
+                        // create new monitor and add visit to it
+                        const newMonitor = new Monitor({
+                            monitoredUrl: url,
+                            createdBy: req.user._id,
+                            visitIds: data._id
+                        });
+                        const monitoredData = await newMonitor.save();
+                    }
                     if(!sentMailDown){
                     // // Report Downtime
                     sendMail(process.env.MAIL_SENDER, process.env.MAIL_SENDER_PASSWORD, [req.user.email], 'API Is Down', `<h1>API Is Down</h1> <p>You have an Issue <br> ${url}</p>`);
                     sentMailDown = true;
                     sentMailUp = false;
-                    res.json(data);
+                   
                     }
-          
+                    console.log('******* HEREE ');
+                    res.json({data});
                   }
                   
                 }

@@ -5,7 +5,7 @@ const monitorSchema = new Schema({
         type: String,
         required: [true, "Please add your visited URL"]
     },
-    responseStatus:{
+    currentResponseStatus:{
         type: Number,
         default: null
     },
@@ -25,7 +25,8 @@ const monitorSchema = new Schema({
     outages:{
         type: Number,
     },
-    visitIds:{ type: Schema.Types.ObjectId, ref: "visit"}
+    createdBy: { type: Schema.Types.ObjectId, ref: "user"},
+    visitIds:[{ type: Schema.Types.ObjectId, ref: "visit"}]
 
 },{
     timestamps:true
