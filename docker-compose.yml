@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    container_name: uptime_monitoring_mazen_aboelanin
+    container_name: uptime_monitoring_api
     restart: always
     build: .
     ports:
