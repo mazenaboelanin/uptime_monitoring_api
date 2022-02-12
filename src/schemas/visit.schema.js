@@ -1,4 +1,7 @@
 const {Schema} = require('mongoose');
+const Monitor = require('../models/Monitor.model');
+const Visit = require('../models/Visit.model');
+
 // visits records every visit on specific URL 
 const visitSchema = new Schema({
     visitedUrl: {
@@ -11,8 +14,7 @@ const visitSchema = new Schema({
     },
     reponseDuration: {
         type: Number,
-        // will check > 0 when calculating avg responseTime
-        default: -1
+        default: 0
     },
     Successful: {
         type: Boolean,
@@ -23,10 +25,17 @@ const visitSchema = new Schema({
         default: Date.now()
     },
     createdBy: { type: Schema.Types.ObjectId, ref: "user"},
+
 },{
     timestamps:true
 });
 
-
+// visitSchema.pre('save', async function(){
+//     const visits = await Visit.find({createdBy: this.createdBy});
+//     let totalResponseTime = 0;
+//     visits.forEach(visit => {totalResponseTime += visit.reponseDuration});
+//     const averageResponseTime = totalResponseTime / visits.length;
+//     await Monitor.updateOne({createdBy: this.createdBy, monitoredUrl: this.visitedUrl }, {averageResponseTime});
+// });
 
 module.exports = visitSchema;

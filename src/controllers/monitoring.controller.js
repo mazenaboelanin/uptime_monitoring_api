@@ -161,3 +161,48 @@ exports.monitoring = async(req, res, next)=>{
           console.log(error);
       }
 }
+
+
+
+// @ desc       GET Monitor Info
+// @ route      GET api/v1/monitoring/info
+// @ access     Private
+
+exports.getAllMonitorsInfo = async(req, res, next)=>{
+  try {
+    const monitors = await Monitor.find();
+    if(monitors.length > 0 ){
+        console.log('*** ', req.user._id.toString());
+        // Return All Monitor Owned By logged in User
+        const monitorsOwned = monitors.filter(monitor => monitor.createdBy.toString() === req.user._id.toString());
+        res.json({success: true, msg: "Get All monitors", count: monitorsOwned.length, monitorsOwned});
+    }else {
+        res.json({success: false, msg: "No monitors found"});
+    }
+} catch (err) {
+    res.json({success: false, msg: "Error", err});
+}
+};
+
+
+// @ desc       Get Single Monitor
+// @ route      GET api/v1/monitoring/info/:id
+// @ access     Private
+exports.getSingleMonitorInfo = async(req, res, next)=>{
+  const {id} = req.params;
+  try {
+      const monitor = await Monitor.findById(id);
+      if(monitor){
+          // Check On monitor Owner
+          if(monitor.createdBy.toString() !== req.user._id.toString() ){
+              res.json({success: false, msg: `User Id: ${monitor.createdBy} is not authorized to GET this URL`});
+          }
+
+          res.json({success: true, msg: "Get Single monitor", monitor});
+      }else {
+          res.json({success: false, msg: `No monitor found with this ${id}`});
+      }
+  } catch (err) {
+      res.json({success: false, msg: "Error", err});
+  }
+}
